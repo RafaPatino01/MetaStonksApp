@@ -3,6 +3,7 @@ import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.http.Path
 
 /*
 data class Result(
@@ -11,8 +12,12 @@ data class Result(
 )*/
 
 interface loginApi {
-    @GET("/login/rafaxdnn/cdd454daa583d821b79fb81fb7b412d1dcd9af5c6bb60928c4d959e629d505c5")
-    suspend fun GET_login() : Response<List<String>>
+    @GET("/login/{user}/{pass}")
+    suspend fun GET_login(
+        @Path("user") user: String,
+        @Path("pass") pass: String
+    ) : Response<List<String>>
+
 }
 
 object RetrofitHelper {
