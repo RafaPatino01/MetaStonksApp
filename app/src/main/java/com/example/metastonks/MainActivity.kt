@@ -116,6 +116,42 @@ fun Start(navController: NavController) {
 fun Login(navController: NavController) {
     val usernameValue = remember { mutableStateOf("") }
     val passwordValue = remember { mutableStateOf("") }
+    val openDialog = remember { mutableStateOf(false)  }
+
+    if (openDialog.value) {
+        AlertDialog(
+            onDismissRequest = {
+                // Dismiss the dialog when the user clicks outside the dialog or on the back
+                // button. If you want to disable that functionality, simply use an empty
+                // onCloseRequest.
+                openDialog.value = false
+            },
+            title = {
+                Text(text = "Dialog Title")
+            },
+            text = {
+                Text("Here is a text ")
+            },
+            confirmButton = {
+                Button(
+
+                    onClick = {
+                        openDialog.value = false
+                    }) {
+                    Text("This is the Confirm Button")
+                }
+            },
+            dismissButton = {
+                Button(
+
+                    onClick = {
+                        openDialog.value = false
+                    }) {
+                    Text("This is the dismiss Button")
+                }
+            }
+        )
+    }
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -185,7 +221,13 @@ fun Login(navController: NavController) {
                 )
                 Spacer(modifier = Modifier.padding(15.dp))
                 Button(
-                    onClick = { Loggear(usernameValue.value, passwordValue.value) },
+                    onClick = {
+                        // Logger function
+                        if(Loggear(navController, usernameValue.value, passwordValue.value)){
+                            println("it works!!!!")
+                            //navController.popBackStack()
+                        }
+                              },
                     colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF066FF0)),
                     modifier = Modifier
                         .fillMaxWidth(0.7f)
@@ -307,7 +349,11 @@ fun Register(navController: NavController) {
                 )
                 Spacer(modifier = Modifier.padding(15.dp))
                 Button(
-                    onClick = { Registrar(usernameValue.value, passwordValue.value, emailValue.value)},
+                    onClick = {
+                        if(Registrar(usernameValue.value, passwordValue.value, emailValue.value)){
+                            navController.popBackStack()
+                        }
+                              },
                     colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF066FF0)),
                     modifier = Modifier
                         .fillMaxWidth(0.7f)
@@ -345,19 +391,37 @@ fun hash(p: String): String {
     return digest.fold("", { str, it -> str + "%02x".format(it) })
 }
 
-fun Loggear(pUser: String, pPass: String){
+fun Loggear(navController: NavController, pUser: String, pPass: String): Boolean{
     println(pUser + "/" + hash(pPass))
+    var res = false
 
     //RETROFIT
     val myApi = RetrofitHelper.getInstance().create(loginApi::class.java)
     GlobalScope.launch {
         val result = myApi.GET_login(pUser,hash(pPass))
-        if (result != null)
-        // Checking the results
-            println("RESULTADO: " + result.body().toString())
+        if (result != null){
+            if(result.body().toString() == "[OK]"){ // SI EL LOGIN FUE CORRECTO
+                res = true
+            }
+        }
     }
+
+    Thread.sleep(3000L)
+    return res
 }
 
-fun Registrar(pUser: String, pPass: String, pEmail: String){
+fun Registrar(pUser: String, pPass: String, pEmail: String): Boolean{
     println(pUser + " " + hash(pPass) + " " + pEmail)
+    //RETROFIT
+    if(pUser != "" && pEmail != ""){
+        val myApi = RetrofitHelper.getInstance().create(registerApi::class.java)
+        GlobalScope.launch {
+            val result = myApi.GET_register(pEmail, pUser , hash(pPass))
+        }
+        Thread.sleep(1000L)
+        return true
+    }
+    else {
+        return false
+    }
 }

@@ -20,15 +20,21 @@ interface loginApi {
 
 }
 
+interface registerApi {
+    @GET("/register/{mail}/{user}/{pass}")
+    suspend fun GET_register(
+        @Path("mail") mail: String,
+        @Path("user") user: String,
+        @Path("pass") pass: String
+    ) : Response<List<String>>
+
+}
+
 object RetrofitHelper {
-
     val baseUrl = "http://146.190.1.241/"
-
     fun getInstance(): Retrofit {
         return Retrofit.Builder().baseUrl(baseUrl)
             .addConverterFactory(GsonConverterFactory.create())
-            // we need to add converter factory to
-            // convert JSON object to Java object
             .build()
     }
 }
