@@ -1,5 +1,7 @@
 package com.example.metastonks
 
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import org.junit.Test
 
 import org.junit.Assert.*
@@ -11,7 +13,7 @@ import org.junit.Assert.*
  */
 class ExampleUnitTest {
     @Test
-    fun addition_isCorrect() {
+    fun ExampleTest() {
         assertEquals(4, 2 + 2)
     }
 }
