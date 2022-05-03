@@ -29,13 +29,28 @@ interface registerApi {
     ) : Response<List<String>>
 }
 
-
-
 interface nftApi {
     @GET("/rarity/{address}")
     suspend fun GET_nft(
         @Path("address") address: String,
     ) : Response<List<String>>
+
+}
+data class crypto_data(
+    var award:Float,
+    var id:Int,
+    var metascore:Float,
+    var ocurrences:Int,
+    var score:Float,
+    var text_sentiment:Float,
+    var title_sentiment: Float,
+    var token: String,
+    var upvote_ratio: Float
+)
+
+interface cryptoApi {
+    @GET("/crypto_data")
+    suspend fun GET_crypto() : Response<List<crypto_data>>
 
 }
 

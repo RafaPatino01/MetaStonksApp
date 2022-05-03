@@ -264,31 +264,110 @@ fun Crypto(navController: NavController){
                 contentAlignment = Alignment.Center
             ){
 
-                Column() {
-                    Divider(color = Color.Transparent , thickness = 20.dp)
-                    Row(
-                        Modifier
-                            .background(Color.DarkGray)
-                            .fillMaxWidth()
-                    ){
-                        Text(
-                            text = "\$BTC",
-                            style = MaterialTheme.typography.h5,
-                            color = Color.White
-                        )
-                        Text(
-                            text = "[9.7]",
-                            style = MaterialTheme.typography.h4,
-                            color = Color.Green
+                // imprimir cryptos
+
+                Column(
+                    Modifier
+                        .verticalScroll(rememberScrollState())
+                ) {
+                    var datos = getCryptos()
+                    for(item in datos){
+                        // Color selection
+                        var lcolor = Color(0xFFBE4646)
+                        if(item.metascore >= 60){
+                            lcolor = Color(0xFF46BE46)
+                        }
+                        if(item.metascore < 60 && item.metascore > 30){
+                            lcolor = Color(0xFFBE8E46)
+                        }
+                        if(item.metascore < 30){
+                            lcolor = Color(0xFFBE4646)
+                        }
+
+                        crypto_item(
+                            token = item.token,
+                            posts = item.ocurrences.toString(),
+                            upvotes = item.upvote_ratio.toString(),
+                            score = item.score.toString(),
+                            sentimiento = item.title_sentiment.toString(),
+                            awards = item.award.toString(),
+                            metascore = String.format("%.0f", item.metascore),
+                            color = lcolor
                         )
                     }
-                    Divider(color = Color.Transparent , thickness = 20.dp)
                 }
 
             }
         },
         backgroundColor = Color(0xFF1F1F1F)
     )
+}
+
+fun getCryptos(): List<crypto_data> {
+    var res: List<crypto_data> = mutableListOf()
+
+    val myApi = RetrofitHelper.getInstance().create(cryptoApi::class.java)
+    GlobalScope.launch {
+        val result = myApi.GET_crypto()
+        if (result != null){
+            res = result.body()!!
+        }
+    }
+
+    Thread.sleep(1500L)
+    return res
+}
+
+@Composable
+fun crypto_item(token: String, posts: String, upvotes: String, score: String, sentimiento: String, awards: String, metascore: String , color: Color){
+    Divider(color = Color.Transparent , thickness = 20.dp)
+    Row(
+        Modifier
+            .background(Color.DarkGray)
+            .fillMaxWidth()
+            .padding(5.dp)
+    ){
+        Column(
+            modifier = Modifier.weight(2f)
+        ){
+            Text(
+                text = "\$"+token,
+                style = MaterialTheme.typography.h5,
+                color = Color.White,
+            )
+            Text(
+                text = "Posts: "+posts,
+                color = Color.White,
+            )
+            Text(
+                text = "Upvotes: "+upvotes,
+                color = Color.White,
+            )
+            Text(
+                text = "Reddit score: "+score,
+                color = Color.White,
+            )
+            Text(
+                text = "Sentimiento: "+sentimiento,
+                color = Color.White,
+            )
+            Text(
+                text = "Premios: "+awards,
+                color = Color.White,
+            )
+        }
+
+        Text(
+            text = "[$metascore]",
+            style = MaterialTheme.typography.h3,
+            fontWeight = FontWeight.Bold,
+            color = color,
+            textAlign = TextAlign.End,
+            modifier = Modifier
+                .weight(1f)
+        )
+    }
+    Divider(color = Color.Transparent , thickness = 20.dp)
 }
 
 @Composable
@@ -307,7 +386,7 @@ fun NFTDetalle(data_nft: Nft, navController: NavController){
     Scaffold(
         topBar = { TopAppBarContent(navController, "NFT 🚀") },
         content = {
-            details(data_nft)
+            details(data_nft, navController)
         },
         backgroundColor = Color(0xFF1F1F1F)
     )
@@ -779,7 +858,7 @@ fun buscarNft(address: String): Nft{
 }
 
 @Composable
-fun details(nft:Nft){
+fun details(nft:Nft, navController: NavController){
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
@@ -824,7 +903,7 @@ fun details(nft:Nft){
                 Spacer(modifier = Modifier.padding(20.dp))
                 Button(
                     onClick = {
-                        //regresar a captura (pantalla anterior)
+                        navController.popBackStack()
                     },
                     colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF066FF0)),
                     modifier = Modifier
