@@ -27,6 +27,15 @@ interface registerApi {
         @Path("user") user: String,
         @Path("pass") pass: String
     ) : Response<List<String>>
+}
+
+
+
+interface nftApi {
+    @GET("/rarity/{address}")
+    suspend fun GET_nft(
+        @Path("address") address: String,
+    ) : Response<List<String>>
 
 }
 

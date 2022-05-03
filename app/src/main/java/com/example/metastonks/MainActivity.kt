@@ -3,18 +3,22 @@ package com.example.metastonks
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -26,11 +30,15 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import coil.compose.AsyncImage
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import java.security.MessageDigest
 import retrofit2.create
 
+var detalle_nft = Nft("","")
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,11 +49,23 @@ class MainActivity : ComponentActivity() {
                 composable("main"){
                     Start(navController)
                 }
+                composable("home"){
+                    Home(navController)
+                }
                 composable("login"){
                     Login(navController)
                 }
                 composable("register"){
                     Register(navController)
+                }
+                composable("crypto"){
+                    Crypto(navController)
+                }
+                composable("nft"){
+                    NFT(navController)
+                }
+                composable("nft_detalle"){
+                    NFTDetalle(detalle_nft, navController)
                 }
             }
 
@@ -110,6 +130,244 @@ fun Start(navController: NavController) {
 
 
     }
+}
+
+@Composable
+fun Home(navController: NavController){
+    Scaffold(
+        topBar = { TopAppBarContent(navController, "Inicio 🚀") },
+        content = {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ){
+                Column(
+                    Modifier
+                        .verticalScroll(rememberScrollState()),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+
+                    Text(
+                        text = "MetaStonks",
+                        style = MaterialTheme.typography.h2,
+                        color = Color.White
+                    )
+                    Text(
+                        text = "Información condensada sobre el mundo del web 3.0",
+                        fontSize = 15.sp,
+                        color = Color.LightGray
+                    )
+                    Divider(color = Color.Transparent , thickness = 45.dp)
+                    Divider(color = Color.LightGray , thickness = 1.dp)
+                    Divider(color = Color.Transparent , thickness = 45.dp)
+
+                    Text(
+                            text = "₵rypto",
+                    style = MaterialTheme.typography.h2,
+                    color = Color.White
+                    )
+                    Text(
+                        text = "\$BTC \$ETH \$USDT \$BNB \$USDC \$XRP \$SOL \$LUNA \$ADA \$UST \$BUSD \$DOGE \$DOT \$AVAX \$SHIB \$STETH \$WBTC \$DAI \$NEAR \$MATIC \$TRX",
+                        fontSize = 20.sp,
+                        color = Color.Gray,
+                        textAlign = TextAlign.Center
+                    )
+
+                    // Coingecko
+                    Divider(color = Color.Transparent , thickness = 45.dp)
+                    Divider(color = Color.LightGray , thickness = 1.dp)
+                    Divider(color = Color.Transparent , thickness = 45.dp)
+                    Text(
+                        text = "💯 WebScrapper",
+                        fontSize = 30.sp,
+                        color = Color.White
+                    )
+                    Divider(color = Color.Transparent , thickness = 15.dp)
+                    Image(
+                        painter = painterResource(R.drawable.coingecko),
+                        contentDescription = null
+                    )
+                    Divider(color = Color.Transparent , thickness = 15.dp)
+                    Text(
+                        text = "Recopilamos información de coingecko para encontrar los TOKENS más relevantes",
+                        fontSize = 20.sp,
+                        color = Color.White,
+                        textAlign = TextAlign.Center
+                    )
+
+                    // Reddit
+                    Divider(color = Color.Transparent , thickness = 45.dp)
+                    Divider(color = Color.LightGray , thickness = 1.dp)
+                    Divider(color = Color.Transparent , thickness = 45.dp)
+                    Text(
+                        text = "📖 MetaScore",
+                        fontSize = 30.sp,
+                        color = Color.White
+                    )
+                    Divider(color = Color.Transparent , thickness = 15.dp)
+                    Text(
+                        text = "Usamos el API de reddit para darte insights de los siguientes foros:",
+                        fontSize = 20.sp,
+                        color = Color.White,
+                        textAlign = TextAlign.Center
+                    )
+                    Divider(color = Color.Transparent , thickness = 15.dp)
+                    Image(
+                        painter = painterResource(R.drawable.reddit),
+                        contentDescription = null,
+                        Modifier
+                            .width(60.dp)
+                    )
+                    Divider(color = Color.Transparent , thickness = 15.dp)
+                    Text(
+                        text = "\n" +
+                                "- r/CryptoCurrency\n" +
+                                "- r/Crypto_com\n" +
+                                "- r/cryptocurrencymemes\n" +
+                                "- r/SatoshiStreetBets\n" +
+                                "- r/CryptoMarkets\n",
+                        fontSize = 20.sp,
+                        color = Color.White,
+                        textAlign = TextAlign.Center
+                    )
+                    // Reddit
+                    Divider(color = Color.Transparent , thickness = 45.dp)
+                    Divider(color = Color.LightGray , thickness = 1.dp)
+                    Divider(color = Color.Transparent , thickness = 45.dp)
+                    Text(
+                        text = "¿Cómo calculamos nuestros resultados?",
+                        fontSize = 25.sp,
+                        color = Color.White,
+                        textAlign = TextAlign.Center
+                    )
+                    Divider(color = Color.Transparent , thickness = 15.dp)
+                    Image(
+                        painter = painterResource(R.drawable.score),
+                        contentDescription = null,
+                        Modifier
+                            .fillMaxWidth()
+                    )
+                }
+            }
+        },
+        backgroundColor = Color(0xFF1F1F1F)
+    )
+}
+
+@Composable
+fun Crypto(navController: NavController){
+    Scaffold(
+        topBar = { TopAppBarContent(navController, "Crypto 🚀") },
+        content = {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ){
+
+                Column() {
+                    Divider(color = Color.Transparent , thickness = 20.dp)
+                    Row(
+                        Modifier
+                            .background(Color.DarkGray)
+                            .fillMaxWidth()
+                    ){
+                        Text(
+                            text = "\$BTC",
+                            style = MaterialTheme.typography.h5,
+                            color = Color.White
+                        )
+                        Text(
+                            text = "[9.7]",
+                            style = MaterialTheme.typography.h4,
+                            color = Color.Green
+                        )
+                    }
+                    Divider(color = Color.Transparent , thickness = 20.dp)
+                }
+
+            }
+        },
+        backgroundColor = Color(0xFF1F1F1F)
+    )
+}
+
+@Composable
+fun NFT(navController: NavController){
+    Scaffold(
+        topBar = { TopAppBarContent(navController, "NFT 🚀") },
+        content = {
+            NftPage(navController)
+        },
+        backgroundColor = Color(0xFF1F1F1F)
+    )
+}
+
+@Composable
+fun NFTDetalle(data_nft: Nft, navController: NavController){
+    Scaffold(
+        topBar = { TopAppBarContent(navController, "NFT 🚀") },
+        content = {
+            details(data_nft)
+        },
+        backgroundColor = Color(0xFF1F1F1F)
+    )
+}
+
+@Composable
+fun TopAppBarContent(navController: NavController, pTitle: String) {
+    val expanded = remember { mutableStateOf(false)}
+
+    TopAppBar(
+        title = { Text(text = pTitle, color = Color.White)},
+        backgroundColor = Color(0xFF575757),
+
+        actions = {
+            Box(
+                Modifier
+                    .wrapContentSize(Alignment.TopEnd)
+            ) {
+                IconButton(onClick = {
+                    expanded.value = true
+                }) {
+                    Icon(
+                        Icons.Filled.MoreVert,
+                        contentDescription = "Descr",
+                        tint = Color.White
+                    )
+                }
+
+                DropdownMenu(
+                    expanded = expanded.value,
+                    onDismissRequest = { expanded.value = false },
+                ) {
+                    DropdownMenuItem(onClick = {
+                        expanded.value = false
+                        navController.navigate("home")
+                    }) {
+                        Text("Inicio")
+                    }
+
+                    Divider()
+
+                    DropdownMenuItem(onClick = {
+                        expanded.value = false
+                        navController.navigate("crypto")
+                    }) {
+                        Text("Crypto")
+                    }
+
+                    Divider()
+
+                    DropdownMenuItem(onClick = {
+                        expanded.value = false
+                        navController.navigate("nft")
+                    }) {
+                        Text("NFTs")
+                    }
+                }
+            }
+        }
+    )
 }
 
 @Composable
@@ -225,7 +483,7 @@ fun Login(navController: NavController) {
                         // Logger function
                         if(Loggear(navController, usernameValue.value, passwordValue.value)){
                             println("it works!!!!")
-                            //navController.popBackStack()
+                            navController.navigate("home")
                         }
                               },
                     colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF066FF0)),
@@ -423,5 +681,164 @@ fun Registrar(pUser: String, pPass: String, pEmail: String): Boolean{
     }
     else {
         return false
+    }
+}
+
+// ----------------- NFTs
+@Composable
+fun NftPage(navController: NavController){
+    val tokenAddress = remember { mutableStateOf("") }
+    var nft = remember { mutableStateOf(Nft("",""))}
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+        modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight()
+            .background(Color(0xFF1F1F1F))
+            .padding(10.dp)
+    ) {
+
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+
+            Text(
+                text = "NFTs",
+                fontWeight = FontWeight.Bold,
+                fontSize = 40.sp,
+                color = Color.White
+            )
+
+            Text(
+                text = "Información condensada sobre el mundo del web 3.0",
+                fontSize = 10.sp,
+                color = Color.White
+            )
+            Spacer(modifier = Modifier.padding(20.dp))
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                OutlinedTextField(
+                    value = tokenAddress.value,
+                    onValueChange = { tokenAddress.value = it },
+                    label = {
+                        Text(
+                            text = "Token address",
+                            style = TextStyle(
+                                color = Color.White
+                            )
+                        )
+                    },
+                    textStyle = TextStyle(
+                        color = Color.White,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 15.sp
+                    ),
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        focusedBorderColor = Color.White,
+                        unfocusedBorderColor = Color.White,
+                        focusedLabelColor = Color.White,
+                        unfocusedLabelColor = Color.White,
+                        cursorColor = Color.White
+                    )
+                )
+
+                Spacer(modifier = Modifier.padding(10.dp))
+                Button(
+                    onClick = {
+                        detalle_nft = buscarNft(tokenAddress.value)
+                        Thread.sleep(1000L)
+                        navController.navigate("nft_detalle")
+                    },
+                    colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF066FF0)),
+                    modifier = Modifier
+                        .fillMaxWidth(0.8f)
+                        .height(50.dp)
+                ) {
+                    Text(text = "Buscar", fontSize = 20.sp)
+                }
+
+                Spacer(modifier = Modifier.padding(20.dp))
+                Spacer(modifier = Modifier.padding(20.dp))
+
+            }
+
+        }
+    }
+}
+
+data class Nft(var rarity:String, var image:String)
+
+fun buscarNft(address: String): Nft{
+    //RETROFIT
+    var response = Nft("","")
+    val myApi = RetrofitHelper.getInstance().create(nftApi::class.java)
+    CoroutineScope(Dispatchers.IO).launch {
+        val result = myApi.GET_nft(address)
+        response.rarity = result.body()?.get(0).toString()
+        response.image = result.body()?.get(1).toString()
+    }
+    return response
+}
+
+@Composable
+fun details(nft:Nft){
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+        modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight()
+            .background(Color(0xFF1F1F1F))
+            .padding(10.dp)
+    ) {
+
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+
+            Text(
+                text = "NFTs",
+                fontWeight = FontWeight.Bold,
+                fontSize = 40.sp,
+                color = Color.White
+            )
+
+            Text(
+                text = "Información condensada sobre el mundo del web 3.0",
+                fontSize = 10.sp,
+                color = Color.White
+            )
+            Spacer(modifier = Modifier.padding(20.dp))
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                AsyncImage(
+                    model = nft.image,
+                    contentDescription = "description of the image"
+                )
+                Spacer(modifier = Modifier.padding(20.dp))
+                Text(
+                    text = "Rarity",
+                    color = Color.White,
+                    fontSize = 20.sp
+                )
+                Text(
+                    text = nft.rarity,
+                    color = Color.White,
+                    fontSize = 15.sp
+                )
+                Spacer(modifier = Modifier.padding(20.dp))
+                Button(
+                    onClick = {
+                        //regresar a captura (pantalla anterior)
+                    },
+                    colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF066FF0)),
+                    modifier = Modifier
+                        .fillMaxWidth(0.8f)
+                        .height(50.dp)
+                ) {
+                    Text(text = "Volver a buscar", fontSize = 20.sp)
+                }
+
+                Spacer(modifier = Modifier.padding(20.dp))
+                Spacer(modifier = Modifier.padding(20.dp))
+
+            }
+
+        }
     }
 }
