@@ -349,12 +349,12 @@ fun Loggear(pUser: String, pPass: String){
     println(pUser + " " + hash(pPass))
 
     //RETROFIT
-    val quotesApi = RetrofitHelper.getInstance().create(QuotesApi::class.java)
+    val quotesApi = RetrofitHelper.getInstance().create(loginApi::class.java)
     GlobalScope.launch {
-        val result = quotesApi.getQuotes()
+        val result = quotesApi.GET_login()
         if (result != null)
         // Checking the results
-            println("RESULT: " + result.body().toString())
+            println("RESULTADO: " + result.body().toString())
     }
 }
 

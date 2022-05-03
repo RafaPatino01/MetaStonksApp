@@ -10,9 +10,9 @@ data class Result(
     val value: String
 )*/
 
-interface QuotesApi {
+interface loginApi {
     @GET("/login/rafaxdnn/cdd454daa583d821b79fb81fb7b412d1dcd9af5c6bb60928c4d959e629d505c5")
-    suspend fun getQuotes() : Response<List<String>>
+    suspend fun GET_login() : Response<List<String>>
 }
 
 object RetrofitHelper {
